@@ -93,17 +93,17 @@ server.get('/patients', function (req, res, next) {
 
   console.log('GET request: patient');
     // Find every entity within the given collection
-    Patients.find({}).exec(function (error, result) {
-      if (error) return next(new restify.InvalidArgumentError(JSON.stringify(error.errors)))
-      res.send(result);
-    });
+    patientsSave.find({}, function (error, patients) {
+      // return all of the patients in the system
+      response.send(patients)
+    })
 })
 
 // Get a single patient by their user id
 server.get('/patients/:id', function (req, res, next) {
 
   // Find a single patient  by their id within save
-  Patients.find({ _id: req.params.id }).exec(function (error, patient) {
+  patientsSave.findOne({ _id: req.params.id }, function (error, patient)  {
     // If there are any errors, pass them to next in the correct format
     if (error) return next(new restify.InvalidArgumentError(JSON.stringify(error.errors)))
 
@@ -158,108 +158,108 @@ server.post('/patients', function (request, res, next) {
   };
 
  // Create the patient and saving to db
- newPatient.save(function (error, result) {
+ patientsSave.create( newPatient, function (error, patients) {
 
   // If there are any errors, pass them to next in the correct format
   if (error) return next(new restify.InvalidArgumentError(JSON.stringify(error.errors)))
 
   // Send the patient if no issues
-  res.send(201, result)
+  response.send(201, patients)
 })
 })
 
 // Delete patient with the given id
-server.del('/patients/:id', function (req, res, next) {
-  console.log('DEL request: patient/' + req.params.id);
-  Patients.remove({ _id: req.params.id }, function (error, result) {
-    // If there are any errors, pass them to next in the correct format
-    if (error) return next(new restify.InvalidArgumentError(JSON.stringify(error.errors)))
+// server.del('/patients/:id', function (req, res, next) {
+//   console.log('DEL request: patient/' + req.params.id);
+//   Patients.remove({ _id: req.params.id }, function (error, result) {
+//     // If there are any errors, pass them to next in the correct format
+//     if (error) return next(new restify.InvalidArgumentError(JSON.stringify(error.errors)))
 
-    // Send a 200 OK response
-    res.send()
-  });
-})
+//     // Send a 200 OK response
+//     res.send()
+//   });
+// })
 
 
 
 // Find patient record by Id
-server.get('/patients/:id/records', function (req, res, next){
-  console.log('GET request: records');
+// server.get('/patients/:id/records', function (req, res, next){
+//   console.log('GET request: records');
   
-  Patients.findById({ _id: req.params.id }, (err, patient) => {
-    if (err) {
-        console.log(err);
-        res.json(err);
-    }
-    if (!patient) {
-        console.log(`->No patient with ID [${req.params.id}] found`);
-       // res.status(404).json({ success: false, msg: "No Patient Found" })
-    }
-    else {
-      Records.find({patient_id: req.params.id}).exec(function (error, record) {
-        // If there are any errors, pass them to next in the correct format
-        if (error) return next(new restify.InvalidArgumentError(JSON.stringify(error.errors)))
+//   Patients.findById({ _id: req.params.id }, (err, patient) => {
+//     if (err) {
+//         console.log(err);
+//         res.json(err);
+//     }
+//     if (!patient) {
+//         console.log(`->No patient with ID [${req.params.id}] found`);
+//        // res.status(404).json({ success: false, msg: "No Patient Found" })
+//     }
+//     else {
+//       Records.find({patient_id: req.params.id}).exec(function (error, record) {
+//         // If there are any errors, pass them to next in the correct format
+//         if (error) return next(new restify.InvalidArgumentError(JSON.stringify(error.errors)))
     
-        if (record) {
-          // Send the record if no issues
-          res.send(record)
-        } else {
-          // Send 404 header if the record doesn't exist
-          res.send(404)
-        }
-      })
+//         if (record) {
+//           // Send the record if no issues
+//           res.send(record)
+//         } else {
+//           // Send 404 header if the record doesn't exist
+//           res.send(404)
+//         }
+//       })
 
-    }
-})
-})
-
-
-// Add patient record
-server.post('/patients/:id/records', function (req, res, next) {
-
-  var newRecord = {
-    patient_id: req.params.patient_id, 
-    blood_pressure: req.params.blood_pressure,
-    resp_rate: req.params.resp_rate,
-    blood_oxygen: req.params.blood_oxygen,
-    record_date: req.params.record_date
-  };
+//     }
+// })
+// })
 
 
+// // Add patient record
+// server.post('/patients/:id/records', function (req, res, next) {
 
-      Patients.findById({ _id: req.params.id }, (err, patient) => {
-          if (err) {
-              console.log(err);
-              res.json(err);
-          }
-          if (!patient) {
-              console.log(`->No Patient with ID [${req.params.id}] found`);
-              res.status(404).json({ success: false, msg: "No Patient Found" })
-          }
-          else {
-              // Create the patient and saving to db
- newRecord.save(function (error, result) {
-
-  // If there are any errors, pass them to next in the correct format
-  if (error) console.log (error)
-
-  // Send the patient if no issues
-  res.send(201, result)
-})
-}
-})
-})
+//   var newRecord = {
+//     patient_id: req.params.patient_id, 
+//     blood_pressure: req.params.blood_pressure,
+//     resp_rate: req.params.resp_rate,
+//     blood_oxygen: req.params.blood_oxygen,
+//     record_date: req.params.record_date
+//   };
 
 
 
-// delete Patient record
-server.del('/patients/:id/record', function (req, res, next) {
-  console.log('DEL request: records/' + req.params.id);
-  Records.remove({ _id: req.params.id }, function (error, result) {
-    // If there are any errors, pass them to next in the correct format
-    if (error) return next(new restify.InvalidArgumentError(JSON.stringify(error.errors)))
+//       Patients.findById({ _id: req.params.id }, (err, patient) => {
+//           if (err) {
+//               console.log(err);
+//               res.json(err);
+//           }
+//           if (!patient) {
+//               console.log(`->No Patient with ID [${req.params.id}] found`);
+//               res.status(404).json({ success: false, msg: "No Patient Found" })
+//           }
+//           else {
+//               // Create the patient and saving to db
+//  newRecord.save(function (error, result) {
 
-    // Send a 200 OK response
-    res.send()
-  });
-})
+//   // If there are any errors, pass them to next in the correct format
+//   if (error) console.log (error)
+
+//   // Send the patient if no issues
+//   res.send(201, result)
+// })
+// }
+// })
+// })
+
+
+
+// // delete Patient record
+// server.del('/patients/:id/record', function (req, res, next) {
+//   console.log('DEL request: records/' + req.params.id);
+//   Records.remove({ _id: req.params.id }, function (error, result) {
+//     // If there are any errors, pass them to next in the correct format
+//     if (error) return next(new restify.InvalidArgumentError(JSON.stringify(error.errors)))
+
+//     // Send a 200 OK response
+//     res.send()
+//   });
+// })

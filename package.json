@@ -1,15 +1,15 @@
 {
-        "name": "milestone2",
-        "version": "1.0.0",
-        "description": "Project M2",
-        "dependencies": {
-            "restify": "4.1.1",
-            "save": "2.3.0"
-        },
-        "author": "Team7",
-        "private": true,
-        "main": "index.js",
-        "scripts": {
-            "start": "node index.js"
-        }
+    "name": "milestone3",
+    "version": "1.0.0",
+    "description": "Project M3",
+    "dependencies": {
+        "restify": "4.1.1",
+        "save": "2.3.0"
+    },
+    "author": "Team7",
+    "private": true,
+    "main": "index.js",
+    "scripts": {
+        "start": "node index.js"
     }
+}
